@@ -2,6 +2,8 @@
 
 
 HWND g_hDlg2;
+
+
 INT_PTR CALLBACK DlgProc2(HWND hWnd , UINT uMsg , WPARAM wParam , LPARAM lParam)
 {
 	switch(uMsg)
@@ -70,12 +72,16 @@ void  DlgGetBreakpointConditon(char* condition , int nMaxSize)
 	GetDlgItemTextA(g_hDlg2 , EDIT_BPCONDITION , condition , nMaxSize);
 }
 
+
+
 void  DlgSetBreakpintAddress(duint uAddress)
 {
 	char buff[ 32 ];
 	sprintf_s(buff ,32, "%x" , uAddress);
 	SetDlgItemTextA(g_hDlg2 , EDIT_BPADDR , buff);
 }
+
+
 
 void  DlgSetConditon(const char* pszCondition)
 {

@@ -1,9 +1,11 @@
 #include "Interface.h"
-#include <string.h>
 #include <map>
 using std::map;
 using std::pair;
 
+// 这些dll名字来自以下cmd 脚本执行的结果:
+//	` for c:\windows\system32\ %i in (*.dll) do (echo %i >> 1.log) `
+// 然后打开1.log, 将dll名转换成字符串即可.
 static char* g_systemDllName[]=
 {
 	"aadauthhelper.dll"

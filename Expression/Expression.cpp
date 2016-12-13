@@ -192,11 +192,6 @@ bool Expression::WriteRegValue(const char* pReg , const char** pEnd , SSIZE_T& u
 {
 	if(pReg == NULL)
 		return false;
-	CONTEXT ct = { 0 };
-	ct.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
-// 
-// 	if(!m_pDdbgObj->GetRegInfo(ct))
-// 		return false;
 
 	pReg = skipspace(pReg);
 	if(*pReg == 'e')

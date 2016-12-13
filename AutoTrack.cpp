@@ -182,7 +182,7 @@ void  CB_StepEventCallBack(CBTYPE cbType , void* callbackinfo)
 		return;
 	}
 
-	// 是否具有条件表达式
+	
 	if(!g_strCondition.IsEmpty())
 	{
 		if(!expr.Value(g_strCondition))
@@ -208,7 +208,6 @@ void  CB_StepEventCallBack(CBTYPE cbType , void* callbackinfo)
 		Script::Module::ModuleInfo modInfo;
 		Script::Module::InfoFromAddr(rip , &modInfo);
 
-		// 是系统dll
 		if(IsValidSystemDll(modInfo.name))
 			goto _KEEPGOING ;
 	}
@@ -216,26 +215,26 @@ void  CB_StepEventCallBack(CBTYPE cbType , void* callbackinfo)
 
 
 	DbgDisasmFastAt(rip , &insInfo);
-
 	if(insInfo.branch && !insInfo.call)
 		pStatus = DbgIsJumpGoingToExecute(rip) ? "True " : "Flase";
 
-	// 获取操作数的值
-
+	// Get operands
 	GetOperand(insInfo.instruction , listOperand);
 	if(listOperand.size() >= 1){
 		pLeftOperand = *listOperand.begin();
+		// get value of operaand 
 		uLeftData = expr.Value(pLeftOperand);
 	}
 	if(listOperand.size() >= 2){
 		list<CStringA>::iterator itr = listOperand.begin();
 		++itr;
 		pRightOperand = *itr;
+		// get value of operaand 
 		uRightData = expr.Value(pRightOperand);
 	}
 
 
-	// 写入
+	
 	buff.Format("%08X |%6s| %-40s | L: <%s=%X>, R: <%s=%X>\n" ,
 				rip ,
 				pStatus ,
@@ -248,6 +247,7 @@ void  CB_StepEventCallBack(CBTYPE cbType , void* callbackinfo)
 
 
 	g_listLog.push_back(buff);
+
 
 _KEEPGOING:
 	Cmd(g_pStepCmd);

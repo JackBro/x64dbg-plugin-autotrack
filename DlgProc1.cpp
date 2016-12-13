@@ -4,6 +4,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #pragma comment(lib,"Comctl32.lib")
+
 HWND g_hDlg1;
 RECT g_stcClientRt;
 char g_szEndAddr[ 32 ];
