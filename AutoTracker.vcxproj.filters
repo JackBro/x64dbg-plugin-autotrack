@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{ac6bcbff-6404-48cd-acb3-3ff49d78672d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialog">
+      <UniqueIdentifier>{0217ae00-0ad6-41f7-bf51-9a57f7c7181d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Export">
+      <UniqueIdentifier>{e8d9dc17-9977-48d1-b0d4-a21f47b54c72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{50b68ec6-464f-4244-b66a-325ab9ba0566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interface">
+      <UniqueIdentifier>{f5b412ec-9461-48a1-bb7e-a30ab7873f23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Expression">
+      <UniqueIdentifier>{dcc98743-dfac-42f5-b08e-0b8a50fcce95}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pluginmain.h">
+      <Filter>Export</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface.h" />
+    <ClInclude Include="Expression\Expression.h">
+      <Filter>Core\Expression</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pluginmain.cpp">
+      <Filter>Export</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoTrack.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Expression\Expression.cpp">
+      <Filter>Core\Expression</Filter>
+    </ClCompile>
+    <ClCompile Include="ConditonBreakpoint.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgProc2.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgProc1.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="systemDllName.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc">
+      <Filter>resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
