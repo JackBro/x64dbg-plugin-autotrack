@@ -6,6 +6,7 @@
 #pragma comment(lib,"Comctl32.lib")
 HWND g_hDlg1;
 RECT g_stcClientRt;
+char g_szEndAddr[ 32 ];
 
 
 
@@ -166,6 +167,7 @@ INT_PTR CALLBACK DlgProc1(HWND hWnd , UINT uMsg , WPARAM wParam , LPARAM lParam)
 			}
 			else
 			{
+
 				SetWindowPos(hWnd ,
 							 HWND_TOPMOST ,
 							 g_stcClientRt.left,
@@ -173,6 +175,7 @@ INT_PTR CALLBACK DlgProc1(HWND hWnd , UINT uMsg , WPARAM wParam , LPARAM lParam)
 							 0 , 0 ,
 							 SWP_NOSIZE
 							 );
+				SetDlgItemTextA(hWnd , EDIT_ENDADDR , g_szEndAddr);
 			}
 			
 
@@ -200,7 +203,7 @@ INT_PTR CALLBACK DlgProc1(HWND hWnd , UINT uMsg , WPARAM wParam , LPARAM lParam)
 			if(LOWORD(wParam) == SB_THUMBTRACK)
 			{
 				int nPos = SendMessage(GetDlgItem(hWnd , SLID_ALPHA) , TBM_GETPOS , 0 , 0);
-				if(nPos <= 80)
+				if(nPos <= 50)
 				{
 					static int nSwitch = 0;
 					int nLang[] = { LANG_CHINESE , LANG_ENGLISH };
@@ -227,7 +230,7 @@ INT_PTR CALLBACK DlgProc1(HWND hWnd , UINT uMsg , WPARAM wParam , LPARAM lParam)
 				{
 					SendMessage(GetDlgItem(hWnd , CHEBOX_DONTSYS) ,
 								BM_SETCHECK ,
-								!(SendMessage(GetDlgItem(hWnd , CHEBOX_DONTOTHER) , BM_GETCHECK , 0 , 0)) ,
+								(SendMessage(GetDlgItem(hWnd , CHEBOX_DONTOTHER) , BM_GETCHECK , 0 , 0)) ,
 								0
 								);
 				}
@@ -279,6 +282,7 @@ INT_PTR CALLBACK DlgProc1(HWND hWnd , UINT uMsg , WPARAM wParam , LPARAM lParam)
 			break;
 		case WM_DESTROY:
 			GetWindowRect(hWnd , &g_stcClientRt);
+			GetDlgItemTextA(hWnd , EDIT_ENDADDR , g_szEndAddr , sizeof(g_szEndAddr));
 			break;
 
 

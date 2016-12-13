@@ -1,4 +1,4 @@
-- Auto tack 
+- Auto track 
   - condition configure
 - Condition breakpoint
   - Like `C` condition expression
