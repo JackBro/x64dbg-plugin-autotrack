@@ -7,7 +7,7 @@
 
 - Log File 
 
-![logfile](png\logFile.png)
+![logfile](png/logFile.png)
 
 - ui
 
