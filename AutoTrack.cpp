@@ -138,11 +138,36 @@ bool GetOperand(const CStringA& str , list<CStringA>& listOperand)
 		nLastStart = nStart;
 	}
 
-	listOperand.push_back(str.Mid(nLastStart , nLastStart));
+	listOperand.push_back(str.Mid(nLastStart));
 	return true;
 }
 
+bool QuerySymbol(duint uSymbolAddress , CStringA& strSymbolName)
+{
+	SYMBOLINFO symbolInfo;
+	symbolInfo.addr = uSymbolAddress;
 
+	// lambda function : ` [](SYMBOLINFO* symbol , void* user)->void `
+	DbgSymbolEnum(Script::Module::BaseFromAddr(uSymbolAddress) ,
+				  [](SYMBOLINFO* symbol , void* user)->void
+	{
+		if(symbol->addr == ((SYMBOLINFO*)user)->addr)
+		{
+			((SYMBOLINFO*)user)->addr = -1;
+			((SYMBOLINFO*)user)->decoratedSymbol = _strdup(symbol->decoratedSymbol);
+		}
+	}
+	, &symbolInfo);
+
+
+	if(symbolInfo.addr == -1)
+	{
+		strSymbolName = symbolInfo.decoratedSymbol ;
+		free(symbolInfo.decoratedSymbol);
+	}
+
+	return symbolInfo.addr == -1;
+}
 
 void  CB_StepEventCallBack(CBTYPE cbType , void* callbackinfo)
 {
@@ -152,7 +177,7 @@ void  CB_StepEventCallBack(CBTYPE cbType , void* callbackinfo)
 	if(g_nTrackStatus != 2)
 		return;
 
-	duint rip = Script::Register::GetCIP();
+	duint cip = Script::Register::GetCIP();
 
 	static Script::Module::ModuleInfo LastModuleInfo;
 	Expression				expr;
@@ -168,7 +193,7 @@ void  CB_StepEventCallBack(CBTYPE cbType , void* callbackinfo)
 	const char*				pRightOperand = "";
 	const char*				pStatus = "--  ";
 
-	if(rip == g_uEndAddress)
+	if(cip == g_uEndAddress)
 	{
 		buff.GetBufferSetLength(20);
 		LoadStringA(g_hIns , STR_STARTTRACK , (char*)(LPCSTR)buff , 20);
@@ -191,22 +216,22 @@ void  CB_StepEventCallBack(CBTYPE cbType , void* callbackinfo)
 		goto _KEEPGOING;
 	}
 
-	if(rip > LastModuleInfo.base + LastModuleInfo.size)
+	if(cip > LastModuleInfo.base + LastModuleInfo.size)
 	{
-		Script::Module::InfoFromAddr(rip , &LastModuleInfo);
+		Script::Module::InfoFromAddr(cip , &LastModuleInfo);
 		buff.Format("						      < ModuleName:%s >\n" , LastModuleInfo.name);
 		g_listLog.push_back(buff);
 	}
 
 	if(g_bIsDontTrackOtherDll)
 	{
-		if(rip > g_stcCurModuleInfo.base + g_stcCurModuleInfo.size)
+		if(cip > g_stcCurModuleInfo.base + g_stcCurModuleInfo.size)
 			goto _KEEPGOING ;
 	}
 	else if(g_bIsDontTrackSystemDll) 
 	{
 		Script::Module::ModuleInfo modInfo;
-		Script::Module::InfoFromAddr(rip , &modInfo);
+		Script::Module::InfoFromAddr(cip , &modInfo);
 
 		if(IsValidSystemDll(modInfo.name))
 			goto _KEEPGOING ;
@@ -214,9 +239,9 @@ void  CB_StepEventCallBack(CBTYPE cbType , void* callbackinfo)
 
 
 
-	DbgDisasmFastAt(rip , &insInfo);
+	DbgDisasmFastAt(cip , &insInfo);
 	if(insInfo.branch && !insInfo.call)
-		pStatus = DbgIsJumpGoingToExecute(rip) ? "True " : "Flase";
+		pStatus = DbgIsJumpGoingToExecute(cip) ? "True " : "Flase";
 
 	// Get operands
 	GetOperand(insInfo.instruction , listOperand);
@@ -233,10 +258,32 @@ void  CB_StepEventCallBack(CBTYPE cbType , void* callbackinfo)
 		uRightData = expr.Value(pRightOperand);
 	}
 
+	
+
+	if(insInfo.call)
+	{
+		CStringA strSymbolName;
+		if(QuerySymbol(uLeftData , strSymbolName))
+		{
+			CStringA& rStrLeftOperand = (*listOperand.begin());
+
+			int nIndex = rStrLeftOperand.Find('[');
+			if(nIndex != -1)
+			{
+				rStrLeftOperand.Truncate(rStrLeftOperand.GetLength() - nIndex);
+				rStrLeftOperand += '[' + strSymbolName + ']';
+			}
+			else
+			{
+				rStrLeftOperand = strSymbolName;
+			}
+			pLeftOperand = rStrLeftOperand;
+		}
+	}
 
 	
 	buff.Format("%08X |%6s| %-40s | L: <%s=%X>, R: <%s=%X>\n" ,
-				rip ,
+				cip ,
 				pStatus ,
 				insInfo.instruction ,
 				pLeftOperand ,
